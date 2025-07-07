@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unfortunate Cookie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .header img {
+            max-width: 800px;
+            width: 100%;
+            height: auto;
+        }
+
+        .cookie-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .cookie-container:hover {
+            transform: scale(1.02);
+        }
+
+        .cookie-image {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .slip-container {
+        position: absolute;
+        top: 0px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 400px;  /* Match your flaming slip width */
+        opacity: 0;
+        animation: floatUp 2s ease-out forwards;
+        display: none;
+}
+
+.show-fortune .slip-container {
+    display: block;
+}
+
+        .show-fortune .cookie-image {
+    max-width: 500px;    /* Keeps broken cookie at original size */
+    transform: translateY(-100px); 
+        }
+
+        .flaming-slip {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+        @keyframes floatUp {
+        0% {
+            opacity: 0;
+            top: 0;  /* Starts at cookie */
+        }
+        20% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 1;
+            top: -250px;  /* Adjust this - how high it floats */
+        }
+    }
+
+.fortune-text {
+    position: absolute;
+    top: 64%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-10deg);
+    width: 75%;  /* Percentage of slip width */
+    height: 100px;
+    pointer-events: none;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.show-fortune .fortune-text {
+    display: block;
+}
+
+        .show-fortune .flaming-slip {
+            display: block;
+        }
+
+        /* Add a subtle glow effect */
+        .cookie-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,200,100,0.1) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cookie-container:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="title-v1.png" alt="Unfortunate Cookie Title">
+    </div>
+
+<div class="cookie-container" id="cookieContainer">
+    <img src="full-fortune-cookie.png" alt="Fortune Cookie" class="cookie-image" id="cookieImage">
+    <div class="slip-container">
+        <img src="flaming-slip.png" alt="Fortune Slip on Fire" class="flaming-slip" id="flamingSlip">
+         <svg class="fortune-text" viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <path id="textPath1" d="M 0,40 Q 70,20 200,25 T 300,35" fill="none"/>
+        <path id="textPath2" d="M 0,60 Q 70,40 200,45 T 300,55" fill="none"/>
+    </defs>
+    <text font-family="Courier New" font-size="12" fill="#333">
+        <textPath href="#textPath1" startOffset="50%" text-anchor="middle" id="fortuneText1">
+        </textPath>
+    </text>
+    <text font-family="Courier New" font-size="12" fill="#333">
+        <textPath href="#textPath2" startOffset="50%" text-anchor="middle" id="fortuneText2">
+        </textPath>
+    </text>
+</svg>
+    </div>
+</div>
+
+    <script>
+        // Get references to the elements
+        const cookieContainer = document.getElementById('cookieContainer');
+        const cookieImage = document.getElementById('cookieImage');
+        const flamingSlip = document.getElementById('flamingSlip');
+        const fortuneText = document.getElementById('fortuneText');
+        
+        let isOpened = false;
+    
+        // Function to get fortune from server
+        async function getFortune() {
+            try {
+                const response = await fetch('http://localhost:3000/fortune', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                return data.fortune;
+            } catch (error) {
+                console.error('Error getting fortune:', error);
+                return 'The server spirits are silent...';
+            }
+        }
+    
+        // Add click event listener
+        cookieContainer.addEventListener('click', async function() {
+            if (!isOpened) {
+                // Change to broken cookie image
+                cookieImage.src = 'broken-fortune-cookie.png';
+                cookieImage.alt = 'Broken Fortune Cookie';
+                
+                // Show the flaming slip
+                cookieContainer.classList.add('show-fortune');
+                
+                // Get and display fortune
+            document.getElementById('fortuneText1').textContent = 'Reading the flames...';
+            document.getElementById('fortuneText2').textContent = '';  // Clear second line
+            const fortune = await getFortune();
+
+                // Update fortune text
+                document.getElementById('fortuneText1').textContent = fortune;
+                document.getElementById('fortuneText2').textContent = '';  // Clear second line
+               // Split fortune into two lines
+                    let line1 = '';
+                let line2 = '';
+
+                if (fortune.length <= 30) {
+                    line1 = fortune;
+                    line2 = '';
+                } else {
+                    // Find the last space before or at position 30
+                    let splitPoint = 30;
+                    while (splitPoint > 0 && fortune[splitPoint] !== ' ') {
+                        splitPoint--;
+                    }
+                    
+                    // If no space found, split at 30 characters anyway
+                    if (splitPoint === 0) {
+                        splitPoint = 30;
+                    }
+                    
+                    line1 = fortune.substring(0, splitPoint).trim();
+                    line2 = fortune.substring(splitPoint).trim();
+                }
+
+                // Update both text paths
+                document.getElementById('fortuneText1').textContent = line1;
+                document.getElementById('fortuneText2').textContent = line2;
+                
+                // Mark as opened
+                isOpened = true;
+            }
+        });
+    </script>
+</body>
+</html>
