@@ -137,13 +137,13 @@
 </head>
 <body>
     <div class="header">
-        <img src="title-v1.png" alt="Unfortunate Cookie Title">
+        <img src="title-v1-small.png" alt="Unfortunate Cookie Title">
     </div>
 
 <div class="cookie-container" id="cookieContainer">
-    <img src="full-fortune-cookie.png" alt="Fortune Cookie" class="cookie-image" id="cookieImage">
+    <img src="full-fortune-cookie-small.png" alt="Fortune Cookie" class="cookie-image" id="cookieImage">
     <div class="slip-container">
-        <img src="flaming-slip.png" alt="Fortune Slip on Fire" class="flaming-slip" id="flamingSlip">
+        <img src="flaming-slip-small.png" alt="Fortune Slip on Fire" class="flaming-slip" id="flamingSlip">
          <svg class="fortune-text" viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <path id="textPath1" d="M 0,40 Q 70,20 200,25 T 300,35" fill="none"/>
@@ -192,7 +192,7 @@
         cookieContainer.addEventListener('click', async function() {
             if (!isOpened) {
                 // Change to broken cookie image
-                cookieImage.src = 'broken-fortune-cookie.png';
+                cookieImage.src = 'broken-fortune-cookie-small.png';
                 cookieImage.alt = 'Broken Fortune Cookie';
                 
                 // Show the flaming slip
