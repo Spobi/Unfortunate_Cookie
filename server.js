@@ -50,17 +50,17 @@ const server = http.createServer((req, res) => {
                 content: `Generate an unfortunate cookie message (like a fortune cookie) following these rules:
                 - Maximum 50 characters total
                 - Don't be cryptic, be direct
-                - ten percent of the time reference a date
-                - ten percent of the time reference a specific location,
-                - ten percent reference a first name,
-                - ten percent reference an animal,
-                - ten percent reference a household object,
-                - ten percent reference a color,
-                - ten percent reference a non-date number,
-                - ten percent reference a activity or event,
-                - ten percent reference a food or drink,
-                - Hint at something without saying what
-                - Use an indirect, cryptic tone
+                - Only include one specific detail from the list below:
+                    - ten percent of the time reference a date
+                    - ten percent of the time reference a specific location,
+                    - ten percent reference a first name,
+                    - ten percent reference an animal,
+                    - ten percent reference a household object,
+                    - ten percent reference a color,
+                    - ten percent reference a non-date number,
+                    - ten percent reference a activity or event,
+                    - ten percent reference a food or drink,
+                    - Hint at something without saying what
 
                 Examples of good fortunes:
                 - "Someone whose name starts with J is going to..."
