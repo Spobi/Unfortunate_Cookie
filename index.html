@@ -173,7 +173,7 @@
         // Function to get fortune from server
         async function getFortune() {
             try {
-                const response = await fetch('http://localhost:3000/fortune', {
+                const response = await fetch('/fortune', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
