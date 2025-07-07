@@ -6,6 +6,33 @@ const path = require('path');
 
 const CLAUDE_API_KEY = process.env.CLAUDE_API_KEY;
 
+// Rate limiting - track requests per IP address
+const requestCounts = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute in milliseconds
+const MAX_REQUESTS_PER_WINDOW = 10; // Max 10 requests per minute per IP
+
+function isRateLimited(ip) {
+    const now = Date.now();
+    const userRequests = requestCounts.get(ip) || [];
+    
+    // Remove old requests outside the time window
+    const recentRequests = userRequests.filter(time => now - time < RATE_LIMIT_WINDOW);
+    
+    // Update the map with recent requests
+    requestCounts.set(ip, recentRequests);
+    
+    // Check if user has exceeded the limit
+    if (recentRequests.length >= MAX_REQUESTS_PER_WINDOW) {
+        return true; // Rate limited
+    }
+    
+    // Add this request to the count
+    recentRequests.push(now);
+    requestCounts.set(ip, recentRequests);
+    
+    return false; // Not rate limited
+}
+
 if (!CLAUDE_API_KEY) {
     console.error('Error: CLAUDE_API_KEY not found in .env file');
     process.exit(1);
@@ -42,6 +69,15 @@ const server = http.createServer((req, res) => {
 
     // Handle POST requests to /fortune
     if (req.method === 'POST' && req.url === '/fortune') {
+        // Get the user's IP address
+        const userIP = req.connection.remoteAddress || req.socket.remoteAddress || 'unknown';
+        
+        // Check if user is rate limited
+        if (isRateLimited(userIP)) {
+            res.writeHead(429, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Too many requests. Please wait a moment.' }));
+            return;
+        }
         const data = JSON.stringify({
             model: 'claude-3-haiku-20240307',
             max_tokens: 150,
@@ -50,9 +86,9 @@ const server = http.createServer((req, res) => {
                 content: `Generate an unfortunate cookie message (like a fortune cookie) following these rules:
                 - Maximum 50 characters total
                 - Don't be cryptic, be direct
-                - Hint at something without saying it
+                - Hint at something without saying it,
                 - Only include one specific detail from the list below:
-                    - ten percent of the time reference a date
+                    - ten percent of the time reference a date,
                     - ten percent of the time reference a specific location,
                     - ten percent reference a first name,
                     - ten percent reference an animal,
