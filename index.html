@@ -23,7 +23,8 @@
         }
 
         .header {
-            margin-bottom: 40px;
+            margin-top: 0px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
@@ -31,6 +32,8 @@
             max-width: 800px;
             width: 100%;
             height: auto;
+            position: relative;
+            top: -130px;
         }
 
         .cookie-container {
@@ -48,7 +51,9 @@
             width: 100%;
             height: auto;
             display: block;
+            transition: none
         }
+
 
         .slip-container {
         position: absolute;
@@ -66,9 +71,9 @@
 }
 
         .show-fortune .cookie-image {
-    max-width: 300px;    /* Keeps broken cookie at original size */
-    transform: translateY(-100px); 
-    transition: transform 0.3s ease-out;
+    max-width: 550px;    /* Keeps broken cookie at original size */
+    transform: translateY(-120px);
+    transition: none
         }
 
         .flaming-slip {
@@ -88,7 +93,7 @@
         }
         100% {
             opacity: 1;
-            top: -250px;  /* Adjust this - how high it floats */
+            top: -350px;  /* Adjust this - how high it floats */
         }
     }
 
@@ -150,11 +155,11 @@
         <path id="textPath1" d="M 0,40 Q 70,20 200,25 T 300,35" fill="none"/>
         <path id="textPath2" d="M 0,60 Q 70,40 200,45 T 300,55" fill="none"/>
     </defs>
-    <text font-family="Courier New" font-size="12" fill="#333">
+    <text font-family="Courier New" font-size="12" fill="#333" font-weight="bold">
         <textPath href="#textPath1" startOffset="50%" text-anchor="middle" id="fortuneText1">
         </textPath>
     </text>
-    <text font-family="Courier New" font-size="12" fill="#333">
+    <text font-family="Courier New" font-size="12" fill="#333" font-weight="bold">
         <textPath href="#textPath2" startOffset="50%" text-anchor="middle" id="fortuneText2">
         </textPath>
     </text>
@@ -170,6 +175,10 @@
         const fortuneText = document.getElementById('fortuneText');
         
         let isOpened = false;
+
+        // Preload the broken cookie image to prevent flickering
+        const brokenCookieImage = new Image();
+        brokenCookieImage.src = 'broken-fortune-cookie-small.png';
     
         // Function to get fortune from server
         async function getFortune() {
@@ -193,7 +202,8 @@
         cookieContainer.addEventListener('click', async function() {
             if (!isOpened) {
                 // Change to broken cookie image
-                cookieImage.src = 'broken-fortune-cookie-small.png';
+                // Use the preloaded image for instant swap
+                cookieImage.src = brokenCookieImage.src;
                 cookieImage.alt = 'Broken Fortune Cookie';
                 
                 // Show the flaming slip
