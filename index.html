@@ -66,8 +66,9 @@
 }
 
         .show-fortune .cookie-image {
-    max-width: 500px;    /* Keeps broken cookie at original size */
+    max-width: 300px;    /* Keeps broken cookie at original size */
     transform: translateY(-100px); 
+    transition: transform 0.3s ease-out;
         }
 
         .flaming-slip {
@@ -95,7 +96,7 @@
     position: absolute;
     top: 64%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(-10deg);
+    transform: translate(-50%, -50%) rotate(-11deg);
     width: 75%;  /* Percentage of slip width */
     height: 100px;
     pointer-events: none;
