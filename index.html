@@ -260,6 +260,23 @@
                 return 'The server spirits are silent...';
             }
         }
+
+        // Function to reset the cookie
+        function fixCookie() {
+            // Reset to whole cookie
+            cookieImage.src = 'full-fortune-cookie-small.png';
+            cookieImage.alt = 'Fortune Cookie';
+            
+            // Hide the fortune elements
+            cookieContainer.classList.remove('show-fortune');
+            
+            // Clear fortune text
+            document.getElementById('fortuneText1').textContent = '';
+            document.getElementById('fortuneText2').textContent = '';
+            
+            // Reset opened state
+            isOpened = false;
+        }
     
         // Add click event listener
         cookieContainer.addEventListener('click', async function() {
@@ -275,24 +292,8 @@
                 // Get and display fortune
             document.getElementById('fortuneText1').textContent = 'Reading the flames...';
             document.getElementById('fortuneText2').textContent = '';  // Clear second line
-            const fortune = await getFortune();
 
-                        // Function to reset the cookie
-            function fixCookie() {
-                // Reset to whole cookie
-                cookieImage.src = 'full-fortune-cookie-small.png';
-                cookieImage.alt = 'Fortune Cookie';
-                
-                // Hide the fortune elements
-                cookieContainer.classList.remove('show-fortune');
-                
-                // Clear fortune text
-                document.getElementById('fortuneText1').textContent = '';
-                document.getElementById('fortuneText2').textContent = '';
-                
-                // Reset opened state
-                isOpened = false;
-            }
+            const fortune = await getFortune();
 
                 // Update fortune text
                 document.getElementById('fortuneText1').textContent = fortune;
