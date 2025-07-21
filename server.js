@@ -193,7 +193,7 @@ req.on('end', () => {
             max_tokens: 150,
             messages: [{
                 role: 'user',
-                content: `Generate an unfortunate cookie message (like a fortune cookie) following these rules:
+                content: `You are generating fortune ${Math.floor(Math.random() * 10069)} Generate an unfortunate cookie message (like a fortune cookie) following these rules:
                 - Maximum 50 characters total
                 - Don't be cryptic, be direct
                 - Hint at something without saying it,
