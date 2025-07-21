@@ -263,21 +263,23 @@
 
         // Function to reset the cookie
         function fixCookie() {
-            // Reset to whole cookie
+            // Change image back IMMEDIATELY (no delay)
             cookieImage.src = 'full-fortune-cookie-small.png';
             cookieImage.alt = 'Fortune Cookie';
             
             // Hide the fortune elements
             cookieContainer.classList.remove('show-fortune');
             
-            // Clear fortune text
+            // Clear fortune text immediately
             document.getElementById('fortuneText1').textContent = '';
             document.getElementById('fortuneText2').textContent = '';
             
-            // Reset opened state
-            isOpened = false;
+            // Reset opened state AFTER a short delay to prevent rapid clicking issues
+            setTimeout(() => {
+                isOpened = false;
+            }, 200);
         }
-    
+
         // Add click event listener
         cookieContainer.addEventListener('click', async function() {
             if (!isOpened) {
