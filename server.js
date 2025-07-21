@@ -208,6 +208,8 @@ req.on('end', () => {
                     - ten percent reference a activity or event,
                     - ten percent reference a food or drink,
 
+                    Try to avoid saying the same thing over and over again. The best way to do this is by being random. Don't say too many colors. Don't say too many animals. Don't say too many etc...
+
                 Examples of good fortunes:
                 - "Someone whose name starts with J is going to..."
                 - "Check the expiration date on tomorrow's breakfast"
