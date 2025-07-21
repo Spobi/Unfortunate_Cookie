@@ -201,7 +201,6 @@ req.on('end', () => {
                     - ten percent of the time reference a date,
                     - ten percent of the time reference a specific location,
                     - ten percent reference a first name,
-                    - ten percent reference an animal,
                     - ten percent reference a household object,
                     - ten percent reference a color,
                     - ten percent reference a non-date number,
