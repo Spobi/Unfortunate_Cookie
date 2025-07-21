@@ -161,6 +161,42 @@
             transition: opacity 0.3s ease;
         }
 
+                .fix-cookie-btn {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #ff6b35, #ff8e35);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInButton 0.5s ease-out 2s forwards;
+        }
+
+        .fix-cookie-btn:hover {
+            background: linear-gradient(45deg, #ff8e35, #ffab35);
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+        }
+
+        @keyframes fadeInButton {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .show-fortune .fix-cookie-btn {
+            display: block;
+        }
+
         .cookie-container:hover::after {
             opacity: 1;
         }
@@ -189,6 +225,7 @@
         </textPath>
     </text>
 </svg>
+    <button class="fix-cookie-btn" id="fixCookieBtn">Fix Cookie</button>
     </div>
 </div>
 
@@ -198,6 +235,7 @@
         const cookieImage = document.getElementById('cookieImage');
         const flamingSlip = document.getElementById('flamingSlip');
         const fortuneText = document.getElementById('fortuneText');
+        const fixCookieBtn = document.getElementById('fixCookieBtn');
         
         let isOpened = false;
 
@@ -239,6 +277,23 @@
             document.getElementById('fortuneText2').textContent = '';  // Clear second line
             const fortune = await getFortune();
 
+                        // Function to reset the cookie
+            function fixCookie() {
+                // Reset to whole cookie
+                cookieImage.src = 'full-fortune-cookie-small.png';
+                cookieImage.alt = 'Fortune Cookie';
+                
+                // Hide the fortune elements
+                cookieContainer.classList.remove('show-fortune');
+                
+                // Clear fortune text
+                document.getElementById('fortuneText1').textContent = '';
+                document.getElementById('fortuneText2').textContent = '';
+                
+                // Reset opened state
+                isOpened = false;
+            }
+
                 // Update fortune text
                 document.getElementById('fortuneText1').textContent = fortune;
                 document.getElementById('fortuneText2').textContent = '';  // Clear second line
@@ -272,6 +327,12 @@
                 // Mark as opened
                 isOpened = true;
             }
+        });
+
+                // Add click event listener for fix button
+        fixCookieBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent triggering the cookie click
+            fixCookie();
         });
     </script>
 </body>
