@@ -237,14 +237,104 @@
         const fortuneText = document.getElementById('fortuneText');
         const fixCookieBtn = document.getElementById('fixCookieBtn');
         
-        let isOpened = false;
+let isOpened = false;
+
+// Simple cache to prevent repetitive fortunes
+const fortuneCache = {
+    used: [], // Store recent fortunes
+    maxSize: 4, // Keep track of last 4 fortunes
+    
+    // Check if a fortune reuses any important words from recent ones
+    isSimilar: function(newFortune) {
+        // Only check the last 4 fortunes
+        const recentFortunes = this.used.slice(-4);
+        
+        if (recentFortunes.length === 0) {
+            return false; // No previous fortunes to compare
+        }
+        
+        // Common words that we allow to repeat (articles, prepositions, common verbs, etc.)
+        const allowedWords = new Set([
+            'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with',
+            'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after',
+            'above', 'below', 'between', 'among', 'under', 'over', 'is', 'are', 'was', 'were',
+            'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+            'could', 'should', 'may', 'might', 'must', 'can', 'cannot', 'won\'t', 'don\'t',
+            'doesn\'t', 'didn\'t', 'haven\'t', 'hasn\'t', 'hadn\'t', 'wouldn\'t', 'couldn\'t',
+            'shouldn\'t', 'mightn\'t', 'mustn\'t', 'isn\'t', 'aren\'t', 'wasn\'t', 'weren\'t',
+            'you', 'your', 'yours', 'it', 'its', 'this', 'that', 'these', 'those', 'they',
+            'them', 'their', 'theirs', 'he', 'him', 'his', 'she', 'her', 'hers', 'we', 'us',
+            'our', 'ours', 'i', 'me', 'my', 'mine', 'who', 'what', 'where', 'when', 'why',
+            'how', 'which', 'whose', 'whom', 'going', 'get', 'got', 'getting', 'take', 'took',
+            'taken', 'taking', 'make', 'made', 'making', 'come', 'came', 'coming', 'go', 'went',
+            'gone', 'see', 'saw', 'seen', 'seeing', 'know', 'knew', 'known', 'knowing', 'think',
+            'thought', 'thinking', 'say', 'said', 'saying', 'tell', 'told', 'telling', 'ask',
+            'asked', 'asking', 'work', 'worked', 'working', 'seem', 'seemed', 'seeming', 'feel',
+            'felt', 'feeling', 'try', 'tried', 'trying', 'leave', 'left', 'leaving', 'call',
+            'called', 'calling', 'keep', 'kept', 'keeping', 'let', 'letting', 'begin', 'began',
+            'begun', 'beginning', 'start', 'started', 'starting', 'show', 'showed', 'shown',
+            'showing', 'hear', 'heard', 'hearing', 'play', 'played', 'playing', 'run', 'ran',
+            'running', 'move', 'moved', 'moving', 'live', 'lived', 'living', 'believe', 'believed',
+            'believing', 'hold', 'held', 'holding', 'bring', 'brought', 'bringing', 'happen',
+            'happened', 'happening', 'write', 'wrote', 'written', 'writing', 'sit', 'sat',
+            'sitting', 'stand', 'stood', 'standing', 'lose', 'lost', 'losing', 'pay', 'paid',
+            'paying', 'meet', 'met', 'meeting', 'include', 'included', 'including', 'continue',
+            'continued', 'continuing', 'set', 'setting', 'learn', 'learned', 'learning', 'change',
+            'changed', 'changing', 'lead', 'led', 'leading', 'understand', 'understood',
+            'understanding', 'watch', 'watched', 'watching', 'follow', 'followed', 'following',
+            'stop', 'stopped', 'stopping', 'create', 'created', 'creating', 'speak', 'spoke',
+            'spoken', 'speaking', 'read', 'reading', 'allow', 'allowed', 'allowing', 'add',
+            'added', 'adding', 'spend', 'spent', 'spending', 'grow', 'grew', 'grown', 'growing',
+            'open', 'opened', 'opening', 'walk', 'walked', 'walking', 'win', 'won', 'winning',
+            'offer', 'offered', 'offering', 'remember', 'remembered', 'remembering', 'love',
+            'loved', 'loving', 'consider', 'considered', 'considering', 'appear', 'appeared',
+            'appearing', 'buy', 'bought', 'buying', 'wait', 'waited', 'waiting', 'serve',
+            'served', 'serving', 'die', 'died', 'dying', 'send', 'sent', 'sending', 'expect',
+            'expected', 'expecting', 'build', 'built', 'building', 'stay', 'stayed', 'staying',
+            'fall', 'fell', 'fallen', 'falling', 'cut', 'cutting', 'reach', 'reached', 'reaching',
+            'kill', 'killed', 'killing', 'remain', 'remained', 'remaining'
+        ]);
+        
+        // Get important words from the new fortune (excluding allowed common words)
+        const newWords = newFortune.toLowerCase()
+            .split(' ')
+            .map(word => word.replace(/[^\w]/g, '')) // Remove punctuation
+            .filter(word => word.length > 2 && !allowedWords.has(word));
+        
+        // Get important words from recent fortunes
+        const recentWords = new Set();
+        recentFortunes.forEach(fortune => {
+            fortune.toLowerCase()
+                .split(' ')
+                .map(word => word.replace(/[^\w]/g, ''))
+                .filter(word => word.length > 2 && !allowedWords.has(word))
+                .forEach(word => recentWords.add(word));
+        });
+        
+        // Check if any important word from the new fortune was used recently
+        return newWords.some(word => recentWords.has(word));
+    },
+    
+    // Add a fortune to the cache
+    add: function(fortune) {
+        this.used.push(fortune);
+        // Keep only the most recent fortunes
+        if (this.used.length > this.maxSize) {
+            this.used.shift(); // Remove the oldest one
+        }
+    }
+};
 
         // Preload the broken cookie image to prevent flickering
         const brokenCookieImage = new Image();
         brokenCookieImage.src = 'broken-fortune-cookie-small.png';
     
-        // Function to get fortune from server
-        async function getFortune() {
+    // Function to get fortune from server
+    async function getFortune() {
+        let attempts = 0;
+        const maxAttempts = 3;
+        
+        while (attempts < maxAttempts) {
             try {
                 const response = await fetch('/fortune', {
                     method: 'POST',
@@ -254,12 +344,43 @@
                 });
                 
                 const data = await response.json();
-                return data.fortune;
+                const fortune = data.fortune;
+                
+                // Check if this fortune is too similar to recent ones
+                if (!fortuneCache.isSimilar(fortune)) {
+                    fortuneCache.add(fortune);
+                    return fortune;
+                }
+                
+                // If it's too similar, try again
+                attempts++;
+                
             } catch (error) {
                 console.error('Error getting fortune:', error);
                 return 'The server spirits are silent...';
             }
         }
+        
+        // If we've tried multiple times and still getting similar fortunes,
+        // just return the last one (better than nothing)
+        try {
+            const response = await fetch('/fortune', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            const fortune = data.fortune;
+            fortuneCache.add(fortune);
+            return fortune;
+            
+        } catch (error) {
+            console.error('Error getting fortune:', error);
+            return 'The server spirits are silent...';
+        }
+    }
 
         // Function to reset the cookie
         function fixCookie() {
