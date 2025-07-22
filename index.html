@@ -333,9 +333,12 @@ const fortuneCache = {
     }
 };
 
-        // Preload the broken cookie image to prevent flickering
+        // Preload both cookie images to prevent flickering
         const brokenCookieImage = new Image();
         brokenCookieImage.src = 'broken-fortune-cookie-small.png';
+
+        const fullCookieImage = new Image();
+        fullCookieImage.src = 'full-fortune-cookie-small.png';
     
     // Function to get fortune from server
     async function getFortune() {
@@ -394,7 +397,7 @@ const fortuneCache = {
         function fixCookie() {
                         // Hide the fortune elements
             cookieContainer.classList.remove('show-fortune');
-            
+
             // Change image back IMMEDIATELY (no delay)
             cookieImage.src = 'full-fortune-cookie-small.png';
             cookieImage.alt = 'Fortune Cookie';
