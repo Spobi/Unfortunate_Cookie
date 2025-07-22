@@ -319,8 +319,8 @@ const fortuneCache = {
             }
         });
 
-        // Only reject if more than 50% of important words are repeated
-        return matches > Math.ceil(newWords.length * 0.5);
+        // Only reject if more than 60% of important words are repeated
+        return matches > Math.ceil(newWords.length * 0.6);
     },
     
     // Add a fortune to the cache
@@ -392,12 +392,12 @@ const fortuneCache = {
 
         // Function to reset the cookie
         function fixCookie() {
+                        // Hide the fortune elements
+            cookieContainer.classList.remove('show-fortune');
+            
             // Change image back IMMEDIATELY (no delay)
             cookieImage.src = 'full-fortune-cookie-small.png';
             cookieImage.alt = 'Fortune Cookie';
-            
-            // Hide the fortune elements
-            cookieContainer.classList.remove('show-fortune');
             
             // Clear fortune text immediately
             document.getElementById('fortuneText1').textContent = '';
