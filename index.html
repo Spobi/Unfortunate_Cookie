@@ -311,8 +311,16 @@ const fortuneCache = {
                 .forEach(word => recentWords.add(word));
         });
         
-        // Check if any important word from the new fortune was used recently
-        return newWords.some(word => recentWords.has(word));
+        // Allow some word overlap - only reject if too many words match
+        let matches = 0;
+        newWords.forEach(word => {
+            if (recentWords.has(word)) {
+                matches++;
+            }
+        });
+
+        // Only reject if more than 50% of important words are repeated
+        return matches > Math.ceil(newWords.length * 0.5);
     },
     
     // Add a fortune to the cache
@@ -332,7 +340,7 @@ const fortuneCache = {
     // Function to get fortune from server
     async function getFortune() {
         let attempts = 0;
-        const maxAttempts = 3;
+        const maxAttempts = 5;
         
         while (attempts < maxAttempts) {
             try {
