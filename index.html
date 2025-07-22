@@ -340,7 +340,7 @@ const fortuneCache = {
     // Function to get fortune from server
     async function getFortune() {
         let attempts = 0;
-        const maxAttempts = 5;
+        const maxAttempts = 10;
         
         while (attempts < maxAttempts) {
             try {
